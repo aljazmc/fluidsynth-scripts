@@ -1,0 +1,4 @@
+## exports
+build/
+npy/
+__pycache__
