@@ -21,16 +21,28 @@ require() {
 
 projects() {
 
-    find scripts -mindepth 1 -maxdepth 1 -type d ! -name __pycache__ ! -name '.*' -printf '%f\n' | sort
+    # a project is a folder holding <name>.py, where <name> is the part of the
+    # folder name after its last hyphen; it may sit in a subfolder such as
+    # simplified/
+    local dir name
+    while IFS= read -r dir; do
+        name=${dir##*/}
+        name=${name##*-}
+        [ -f "scripts/$dir/$name.py" ] && echo "$dir"
+    done < <(find scripts -mindepth 1 -maxdepth 2 -type d ! -name __pycache__ ! -name '.*' -printf '%P\n') | sort
 
 }
 
 output() {
 
+    # exports stay flat: simplified/foo is written as build/foo.<format>, any
+    # other subfolder becomes a prefix: transcribed/foo -> build/transcribed-foo.<format>
+    local name=${1##*/} folder=${1%/*}
+    [ "$folder" != "$1" ] && [ "$folder" != "simplified" ] && name="${folder//\//-}-$name"
     case "$2" in
-        npy) echo "npy/$1.npy" ;;
-        alac) echo "build/$1-alac.m4a" ;;
-        *) echo "build/$1.$2" ;;
+        npy) echo "npy/$name.npy" ;;
+        alac) echo "build/$name-alac.m4a" ;;
+        *) echo "build/$name.$2" ;;
     esac
 
 }
@@ -91,8 +103,17 @@ usage() {
     echo "            or: $0 {all|<project>} {all|npy|${FORMATS[*]}}" >&2
     echo "            or: $0 {all|<project>} clean" >&2
     echo "            or: $0 {all|<project>} {npy|${FORMATS[*]}} clean" >&2
+    echo "  <group> all may stand in for all, e.g. $0 transcribed all mp3" >&2
+    echo "Groups: $(groups | paste -sd' ')" >&2
     echo "Projects: $(projects | paste -sd' ')" >&2
     exit 1
+
+}
+
+groups() {
+
+    # folders that hold projects, such as simplified/ and transcribed/
+    projects | grep / | cut -d/ -f1 | sort -u
 
 }
 
@@ -109,6 +130,13 @@ valid_format() {
 
 [ "$1" = "clean" ] && [ $# -eq 1 ] && { clean; exit; }
 
+# "<group> all ..." works like "all ...", limited to the projects in that group
+group=""
+if [ $# -ge 3 ] && [ "$2" = "all" ] && groups | grep -qx -- "$1"; then
+    group="$1"
+    shift
+fi
+
 if [ $# -eq 2 ] && [ "$2" = "clean" ]; then
     format="all"
     action="remove"
@@ -124,7 +152,9 @@ fi
 
 valid_format "$format" || usage
 
-if [ "$1" = "all" ]; then
+if [ -n "$group" ]; then
+    mapfile -t targets < <(projects | grep "^$group/")
+elif [ "$1" = "all" ]; then
     mapfile -t targets < <(projects)
 elif [ -d "scripts/$1" ]; then
     targets=("$1")
