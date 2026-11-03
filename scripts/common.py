@@ -108,7 +108,9 @@ def load_project(target):
 
     A project scripts/<theme>-<name>/ must provide <name>.py with a <name>()
     function returning a float array of shape (frames, CHANNELS) at RATE, e.g.
-    scripts/nature-chirping00/chirping00.py:chirping00().
+    scripts/nature-chirping00/chirping00.py:chirping00(). Projects can sit one
+    folder deeper, e.g. simplified/handel-messiah-44-hallelujah; their output
+    still goes straight into the target directory (see export_name).
     """
     args = sys.argv[1:]
     if not args:
@@ -131,7 +133,15 @@ def load_project(target):
     target_dir = os.path.join(root_dir, target)
     os.makedirs(target_dir, exist_ok=True)
 
-    return audio, os.path.join(target_dir, project)
+    return audio, os.path.join(target_dir, export_name(project))
+
+
+def export_name(project):
+    """Exports stay flat: simplified/foo is written as foo, any other
+    subfolder keeps its name as a prefix (transcribed/foo -> transcribed-foo)
+    so it cannot clash with the simplified version."""
+    folder, _, name = project.rpartition("/")
+    return name if folder in ("", "simplified") else folder.replace("/", "-") + "-" + name
 
 
 def ffmpeg_export(audio, path, *args):
