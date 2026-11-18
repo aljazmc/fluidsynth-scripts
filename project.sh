@@ -104,8 +104,8 @@ usage() {
     echo "            or: $0 {all|<project>} clean" >&2
     echo "            or: $0 {all|<project>} {npy|${FORMATS[*]}} clean" >&2
     echo "  <group> all may stand in for all, e.g. $0 transcribed all mp3" >&2
-    echo "Groups: $(groups | paste -sd' ')" >&2
-    echo "Projects: $(projects | paste -sd' ')" >&2
+    echo "Groups: $(groups | head | paste -sd'\n')" >&2
+    echo "Projects: $(projects | head | paste -sd'\n')" >&2
     exit 1
 
 }
