@@ -92,6 +92,7 @@ process() {
 
 clean() {
 
+    find . -type d -name __pycache__ | xargs -I {} rm -rf {}
     rm -rf build npy
 
 }
