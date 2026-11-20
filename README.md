@@ -3,7 +3,7 @@
 Python scripts that make music and soundscapes with FluidSynth and NumPy,
 and a shell script that encodes them with FFmpeg into WAV, FLAC, MP3, Opus
 and about fifteen other audio formats. Each piece is a self-contained
-project in `scripts/` with AI-generated code.
+project in `scripts/`.
 
 ## Requirements
 
