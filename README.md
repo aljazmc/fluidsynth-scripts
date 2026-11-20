@@ -164,6 +164,9 @@ shellcheck project.sh tests/*.sh
 ruff check .
 ```
 
+GitHub Actions runs both on every push and pull request, see
+[.github/workflows/lint.yml](.github/workflows/lint.yml).
+
 ## Gallery
 
 `simplified/beethoven-fur-elise`, exported with

@@ -282,7 +282,6 @@ def spring():
 
 def lathe(level):
     """A belt-driven lathe: the whine of the spindle, the hum of the belt, the tool chattering."""
-    t = np.arange(FRAMES) / RATE
     spindle = tone(np.full(FRAMES, rng.uniform(180, 260)), (1, 0.5, 0.3, 0.2)) * 0.3
     belt = bandpass(noise(FRAMES, 1, 1.0), 60, 1200) * 0.5
     cutting = bandpass(noise(FRAMES, 1), 1500, 8000) * np.clip(wander(FRAMES, 0.4, -0.5, 1.0), 0, 1) ** 2

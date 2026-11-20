@@ -50,7 +50,8 @@ output() {
 run() {
 
     local script file
-    [ "$2" = "npy" ] && script="savenpy" || script="export$2"
+    script="export$2"
+    [ "$2" = "npy" ] && script="savenpy"
     file=$(output "$1" "$2")
 
     if [ -e "$file" ]; then
@@ -58,10 +59,12 @@ run() {
         return
     fi
 
-    python3 "scripts/$script.py" "$1" && echo "Created $file" || {
+    if python3 "scripts/$script.py" "$1"; then
+        echo "Created $file"
+    else
         echo "FAILED: $script for $1" >&2
         status=1
-    }
+    fi
 
 }
 
@@ -79,20 +82,21 @@ remove() {
 
 process() {
 
-    local format
-    if [ "$2" = "all" ]; then
-        for format in "${FORMATS[@]}" npy; do
-            "$3" "$1" "$format"
-        done
-    else
-        "$3" "$1" "$2"
-    fi
+    local format formats=("$2")
+    [ "$2" = "all" ] && formats=("${FORMATS[@]}" npy)
+
+    for format in "${formats[@]}"; do
+        case "$3" in
+            run) run "$1" "$format" ;;
+            remove) remove "$1" "$format" ;;
+        esac
+    done
 
 }
 
 clean() {
 
-    find . -type d -name __pycache__ | xargs -I {} rm -rf {}
+    find . -type d -name __pycache__ -prune -exec rm -rf {} +
     rm -rf build npy
 
 }

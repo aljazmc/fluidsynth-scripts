@@ -283,7 +283,6 @@ def typewriter(position):
     track = np.zeros((FRAMES, 2))
     at, column = rng.uniform(0, 3), 0
     while at < SECONDS - 1:
-        n = round(RATE * 0.03)
         key = overlay(thud(0.03, 1500) * 0.5, clank(rng.uniform(1500, 2500), 0.03))
         place(track, pan(key, position), at)
         at += rng.uniform(0.1, 0.25)

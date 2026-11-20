@@ -229,13 +229,11 @@ def drone(kind, path, length):
     if path == "hover":
         near = bell(frames, 0.15) * wander(frames, 0.5, 0.7, 1.0)
         position = rng.uniform(-0.6, 0.6) + 0.1 * wander(frames, 0.3, -1, 1)
-        doppler = 1 + 0.01 * wander(frames, 0.5, -1, 1)
+        wander(frames, 0.5, -1, 1)  # unused; keeps the random numbers of every take as they were
     else:
         near = np.exp(-((t - 0.5) / 0.2) ** 2)
         start = rng.choice([-1, 1])
         position = start * (1 - 2 * t)
-        doppler = 1 + 0.04 * np.tanh(4 * (0.5 - t))
-    blade, _ = KINDS[kind]
     sound = rotors(kind, frames) * near
     if SCAN and rng.random() < 0.5:  # a scanning beep, now and then
         for at in np.arange(rng.uniform(0.5, 1.5), length - 0.5, rng.uniform(1.0, 2.0)):

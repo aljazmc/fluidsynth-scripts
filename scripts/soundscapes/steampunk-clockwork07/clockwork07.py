@@ -283,7 +283,7 @@ def ratchet():
     return out[:round((at + 0.1) * RATE)]
 
 
-def bell(f0):
+def tower_bell(f0):
     """A tower bell: a strike and a long, shimmering hum."""
     n = round(RATE * 6)
     ratios = (0.5, 1.0, 1.19, 1.5, 2.0, 2.52, 3.01)
@@ -302,5 +302,5 @@ def clockwork07():
     if CHIME is not None:  # the tower clock strikes
         at, strikes, f0 = CHIME
         for k in range(strikes):
-            place(mix, pan(bell(f0) * db(-6), 0.1), at + 2.0 * k)
+            place(mix, pan(tower_bell(f0) * db(-6), 0.1), at + 2.0 * k)
     return finish(reverb(mix, ROOM, WET), FADE)
