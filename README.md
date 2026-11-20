@@ -143,6 +143,27 @@ oscillators, panning and reverb); `chirping`, `waves` and `calliope` also
 play General MIDI instruments through `Score`. Change the `SEED` for
 another take of the same scene.
 
+## Tests
+
+```sh
+bash tests/test_project.sh             # project.sh
+python3 -m unittest discover tests     # the Python scripts
+```
+
+The tests need only bash and Python's standard library, and none of them
+runs the application or writes outputs. `tests/test_project.sh` checks
+that `project.sh` rejects bad arguments with its usage and exit code 1.
+`tests/test_common.py` checks `varlen()`, the MIDI variable-length
+numbers, against the examples in the Standard MIDI File specification.
+
+To lint the code with [ShellCheck](https://www.shellcheck.net/) and
+[Ruff](https://docs.astral.sh/ruff/):
+
+```sh
+shellcheck project.sh tests/*.sh
+ruff check .
+```
+
 ## Gallery
 
 `simplified/beethoven-fur-elise`, exported with
