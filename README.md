@@ -1,19 +1,60 @@
 # fluidsynth-scripts
 
-Python scripts that make music and soundscapes with FluidSynth and NumPy,
-and a shell script that encodes them with FFmpeg into WAV, FLAC, MP3, Opus
-and about fifteen other audio formats. Each piece is a self-contained
-project in `scripts/`.
+[![lint](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/lint.yml/badge.svg)](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/lint.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![FluidSynth](https://img.shields.io/badge/FluidSynth-MIDI-2d6db5)](https://www.fluidsynth.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-synthesis-013243?logo=numpy&logoColor=white)](https://numpy.org/)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-20%20formats-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
+[![Python 3](https://img.shields.io/badge/Python-3-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![ShellCheck](https://img.shields.io/badge/ShellCheck-checked-4eaa25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-fe5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/)
+
+Music and soundscapes written as code. Python scripts write MIDI for
+FluidSynth's General MIDI instruments and synthesize sound with NumPy, and a
+shell script encodes the result with FFmpeg into WAV, FLAC, MP3, Opus and 17
+other formats. 508 projects: eight arrangements of classical music and 500
+ambient soundscapes.
+
+[![Waveform of Für Elise; click to listen](gallery/beethoven-fur-elise.png)](gallery/beethoven-fur-elise.mp3)
+
+▶ [beethoven-fur-elise.mp3](gallery/beethoven-fur-elise.mp3) (2:56), exported
+with `./project.sh simplified/beethoven-fur-elise mp3` and the FluidR3_GM
+soundfont.
+
+## Features
+
+- **508 projects.** Für Elise and Holst's *The Planets* in simplified
+  arrangements, and fifty ambient scenes in ten takes each, from rain and
+  whales to maglev trains and clockwork.
+- **A text notation for music.** Notes, chords, ties, staccato, accents,
+  dynamics with hairpins, meters and pedal changes, written bar by bar as
+  text and played through FluidSynth.
+- **Synthesis with NumPy.** Noise, filters, oscillators, panning and reverb,
+  with every source placed by position, distance and timing.
+- **21 outputs.** PCM, lossless and lossy formats encoded by FFmpeg from 48
+  kHz stereo floats, and the raw NumPy array for further processing.
+- **Reproducible takes.** Each soundscape starts with its settings and a
+  random seed; change the seed for another take of the same scene.
+
+## Quick start
+
+```sh
+git clone https://github.com/aljazmc/fluidsynth-scripts.git
+cd fluidsynth-scripts
+./project.sh simplified/beethoven-fur-elise mp3
+```
+
+The audio is written to `build/beethoven-fur-elise.mp3`.
 
 ## Requirements
 
-- Python 3 with [NumPy](https://numpy.org/)
-- FluidSynth, with `fluidsynth` on the `PATH`
-- A General MIDI soundfont, by default
-  `/usr/share/sounds/sf2/FluidR3_GM.sf2` (on Debian and Ubuntu, the
-  `fluid-soundfont-gm` package); set `SOUNDFONT` to use another one
-- FFmpeg, with `ffmpeg` on the `PATH`, built with the encoders of the
-  formats you want (`libmp3lame`, `libvorbis`, `libopus`, …)
+| Requirement | Notes |
+| --- | --- |
+| Python 3 | with [NumPy](https://numpy.org/) |
+| FluidSynth | `fluidsynth` on the `PATH` |
+| A General MIDI soundfont | by default `/usr/share/sounds/sf2/FluidR3_GM.sf2` (on Debian and Ubuntu, the `fluid-soundfont-gm` package); set `SOUNDFONT` to use another one |
+| FFmpeg | `ffmpeg` on the `PATH`, built with the encoders of the formats you want (`libmp3lame`, `libvorbis`, `libopus`, …) |
 
 ## Usage
 
@@ -35,29 +76,29 @@ For example:
 SOUNDFONT=/usr/share/sounds/sf2/TimGM6mb.sf2 ./project.sh simplified/beethoven-fur-elise wav
 ```
 
-A project is named by its path inside `scripts/`, and a group is a folder
-of projects, such as `simplified` or `soundscapes`. Outputs stay flat:
+A project is named by its path inside `scripts/`, and a group is a folder of
+projects, such as `simplified` or `soundscapes`. Outputs stay flat:
 `simplified/<name>` goes to `build/<name>.<format>`, and other groups keep
 their name as a prefix, e.g. `soundscapes/nature-rain00` goes to
-`build/soundscapes-nature-rain00.<format>`. Existing outputs are skipped,
-so clean them to rebuild. Run `./project.sh` from the repository root.
-Without arguments, it prints the usage with every format and group and
-the first ten projects; `ls scripts/*/` lists them all.
+`build/soundscapes-nature-rain00.<format>`. Existing outputs are skipped, so
+clean them to rebuild. Run `./project.sh` from the repository root. Without
+arguments, it prints the usage with every format and group and the first ten
+projects; `ls scripts/*/` lists them all.
 
 ### Formats
 
-`aac ac3 aiff alac au caf dts eac3 flac m4a mka mp2 mp3 ogg opus tta w64
-wav wma wv npy`
-
 All audio is rendered as 48 kHz stereo floats and encoded by FFmpeg:
 
-- **PCM**: `wav` and `au` (16-bit), `aiff`, `caf` and `w64` (24-bit).
-- **Lossless compressed**: `flac` (24-bit), `mka` (FLAC in Matroska),
-  `alac` (written as `build/<name>-alac.m4a`, so it doesn't clash with
-  `m4a`), `tta` and `wv`.
-- **Lossy**: `aac` and `m4a` (AAC), `ac3`, `dts`, `eac3`, `mp2`, `mp3`,
-  `ogg` (Vorbis), `opus` and `wma`.
-- **`npy`** saves the raw float32 array of shape `(frames, 2)` to
+| Kind | Formats |
+| --- | --- |
+| PCM | `wav` and `au` (16-bit), `aiff`, `caf` and `w64` (24-bit) |
+| Lossless compressed | `flac` (24-bit), `mka` (FLAC in Matroska), `alac`, `tta`, `wv` |
+| Lossy | `aac` and `m4a` (AAC), `ac3`, `dts`, `eac3`, `mp2`, `mp3`, `ogg` (Vorbis), `opus`, `wma` |
+| Raw | `npy` |
+
+- `alac` is written as `build/<name>-alac.m4a`, so it doesn't clash with
+  `m4a`.
+- `npy` saves the raw float32 array of shape `(frames, 2)` to
   `npy/<name>.npy`, to load it with `numpy.load()` and process it further.
 
 ## How it works
@@ -77,8 +118,8 @@ project.sh ──> python3 scripts/export<format>.py <project>
                   ffmpeg -f f32le -i pipe:0 -c:a <codec> ...
 ```
 
-- `project.sh` checks the arguments and runs `scripts/export<format>.py`
-  (or `scripts/savenpy.py`) with the project as its argument.
+- `project.sh` checks the arguments and runs `scripts/export<format>.py` (or
+  `scripts/savenpy.py`) with the project as its argument.
 - `scripts/common.py` imports the project, calls its function, checks the
   shape of the audio and clips it to ±1. It also holds the shared tools:
   `Score`, which collects notes and controller changes in seconds, writes
@@ -89,15 +130,15 @@ project.sh ──> python3 scripts/export<format>.py <project>
 
 ## Projects
 
-A project is a folder holding `<name>.py` with a function `<name>()`,
-where `<name>` is the part of the folder name after its last hyphen. It
-returns a float array of shape `(frames, 2)` at 48 kHz. A project needs
-nothing outside its folder, apart from `scripts/common.py`.
+A project is a folder holding `<name>.py` with a function `<name>()`, where
+`<name>` is the part of the folder name after its last hyphen. It returns a
+float array of shape `(frames, 2)` at 48 kHz. A project needs nothing
+outside its folder, apart from `scripts/common.py`.
 
 ### Simplified
 
-Simplified arrangements of classical music in the public domain, played
-by FluidSynth's General MIDI instruments:
+Simplified arrangements of classical music in the public domain, played by
+FluidSynth's General MIDI instruments:
 
 ```
 scripts/simplified/beethoven-fur-elise/
@@ -107,7 +148,7 @@ scripts/simplified/beethoven-fur-elise/
 ```
 
 | Project | Played by |
-|---|---|
+| --- | --- |
 | beethoven-fur-elise | piano |
 | holst-the-planets-01-mars-the-bringer-of-war | orchestra |
 | holst-the-planets-02-venus-the-bringer-of-peace | orchestra |
@@ -117,31 +158,36 @@ scripts/simplified/beethoven-fur-elise/
 | holst-the-planets-06-uranus-the-magician | orchestra |
 | holst-the-planets-07-neptune-the-mystic | orchestra |
 
-The notation (see the docstring of `piano.py`) writes notes, chords,
-rests, ties, staccato, accents, dynamics with hairpins, meters and pedal
-changes as text, e.g. `!mf c4 eb4:1/2 f#3+a3+d4:1.5 |`. The scores were
-transcribed bar by bar from braille music. `orchestra.py` gives each part
-its own General MIDI instrument, channel and pan; sustained instruments
-follow the dynamics through MIDI expression (CC11), struck and plucked
-ones through note velocity.
+The notation (see the docstring of `piano.py`) writes notes, chords, rests,
+ties, staccato, accents, dynamics with hairpins, meters and pedal changes as
+text, e.g. `!mf c4 eb4:1/2 f#3+a3+d4:1.5 |`. The scores were transcribed
+bar by bar from braille music. `orchestra.py` gives each part its own
+General MIDI instrument, channel and pan; sustained instruments follow the
+dynamics through MIDI expression (CC11), struck and plucked ones through
+note velocity.
 
 ### Soundscapes
 
 Fifty ambient scenes in three themes, each in ten takes (`00` to `09`),
 named `soundscapes/<theme>-<scene><take>`:
 
+<details>
+<summary>3 themes, 50 scenes</summary>
+
 | Theme | Scenes |
-|---|---|
+| --- | --- |
 | cyberpunk | club, drones, factory, maglev, neon, reactor, servers, streets, terminal, traffic |
 | nature | bamboo, bees, campfire, cave, chirping, cicadas, crickets, dunes, frogs, geese, geyser, hail, ice, jungle, loons, owls, rain, rockfall, savanna, seals, stags, stream, thunderstorm, volcano, waterfall, waves, whales, whitewater, wind, wolves |
 | steampunk | airship, automaton, boiler, calliope, clockwork, engine, foundry, locomotive, telegraph, workshop |
+
+</details>
 
 Each soundscape is a single file that starts with its settings: length,
 random seed, fades, levels, and the position, distance and timing of each
 sound source. Most are synthesized with NumPy alone (noise, filters,
 oscillators, panning and reverb); `chirping`, `waves` and `calliope` also
-play General MIDI instruments through `Score`. Change the `SEED` for
-another take of the same scene.
+play General MIDI instruments through `Score`. Change the `SEED` for another
+take of the same scene.
 
 ## Tests
 
@@ -151,12 +197,14 @@ python3 -m unittest discover tests     # the Python scripts
 ```
 
 The tests need only bash and Python's standard library, and none of them
-runs the application or writes outputs. `tests/test_project.sh` checks
-that `project.sh` rejects bad arguments with its usage and exit code 1.
-`tests/test_common.py` checks `varlen()`, the MIDI variable-length
-numbers, against the examples in the Standard MIDI File specification.
+runs the application or writes outputs.
 
-To lint the code with [ShellCheck](https://www.shellcheck.net/) and
+- `tests/test_project.sh` checks that `project.sh` rejects bad arguments
+  with its usage and exit code 1.
+- `tests/test_common.py` checks `varlen()`, the MIDI variable-length
+  numbers, against the examples in the Standard MIDI File specification.
+
+Lint the code with [ShellCheck](https://www.shellcheck.net/) and
 [Ruff](https://docs.astral.sh/ruff/):
 
 ```sh
@@ -167,37 +215,23 @@ ruff check .
 GitHub Actions runs both on every push and pull request, see
 [.github/workflows/lint.yml](.github/workflows/lint.yml).
 
-## Gallery
-
-`simplified/beethoven-fur-elise`, exported with
-`./project.sh simplified/beethoven-fur-elise mp3` and the FluidR3_GM
-soundfont. Click the waveform to listen:
-
-[![beethoven-fur-elise](gallery/beethoven-fur-elise.png)](gallery/beethoven-fur-elise.mp3)
-
-▶ [beethoven-fur-elise.mp3](gallery/beethoven-fur-elise.mp3) (2:56)
-
 ## License
 
-The scripts are licensed under the MIT license, see [LICENSE](LICENSE).
-The files in `gallery/` were made with them and are under the same
-license. The music they arrange (Beethoven, Holst) is in the public
-domain.
+The scripts are licensed under the [MIT License](LICENSE). The files in
+`gallery/` were made with them and are under the same license. The music
+they arrange (Beethoven, Holst) is in the public domain.
 
 The scripts drive software and use sounds that are not part of this
 repository and have licenses of their own:
 
 - [FluidSynth](https://github.com/FluidSynth/fluidsynth/blob/master/LICENSE)
-  is licensed under the GNU Lesser General Public License, version 2.1
-  or later. The scripts only run it as a separate program.
+  is licensed under the GNU Lesser General Public License, version 2.1 or
+  later. The scripts only run it as a separate program.
 - Soundfonts: the default
   [FluidR3_GM](https://packages.debian.org/stable/fluid-soundfont-gm)
   soundfont by Frank Wen is licensed under the MIT license. Other
   soundfonts have their own licenses, e.g. TimGM6mb is under the GNU GPL,
-  version 2; check the license of the soundfont you use before you
-  publish what you render with it.
-- [NumPy](https://numpy.org/doc/stable/license.html) is licensed under
-  the BSD 3-Clause license.
-- [FFmpeg](https://ffmpeg.org/legal.html) is licensed under the GNU LGPL,
-  version 2.1 or later, or the GNU GPL, version 2 or later, depending on
-  how it was built.
+  version 2; check the license of the soundfont you use before you publish
+  what you render with it.
+- [NumPy](https://numpy.org/doc/stable/license.html) is licensed under the
+  BSD 3-Clause license.
