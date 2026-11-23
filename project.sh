@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FORMATS=(
-    aac ac3 aiff alac au caf dts eac3 flac m4a mka mp2 mp3 ogg opus tta
+    aac ac3 aiff alac au caf dts eac3 flac m4a mka mp2 mp3 mp4 ogg opus tta
     w64 wav wma wv
 )
 

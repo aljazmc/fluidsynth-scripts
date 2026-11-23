@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![FluidSynth](https://img.shields.io/badge/FluidSynth-MIDI-2d6db5)](https://www.fluidsynth.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-synthesis-013243?logo=numpy&logoColor=white)](https://numpy.org/)
-[![FFmpeg](https://img.shields.io/badge/FFmpeg-20%20formats-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
+[![FFmpeg](https://img.shields.io/badge/FFmpeg-21%20formats-007808?logo=ffmpeg&logoColor=white)](https://ffmpeg.org/)
 [![Python 3](https://img.shields.io/badge/Python-3-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-checked-4eaa25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
@@ -12,15 +12,36 @@
 
 Music and soundscapes written as code. Python scripts write MIDI for
 FluidSynth's General MIDI instruments and synthesize sound with NumPy, and a
-shell script encodes the result with FFmpeg into WAV, FLAC, MP3, Opus and 17
-other formats. 508 projects: eight arrangements of classical music and 500
-ambient soundscapes.
+shell script encodes the result with FFmpeg into WAV, FLAC, MP3, Opus, MP4
+video and 17 other formats. 508 projects: eight arrangements of classical
+music and 500 ambient soundscapes.
 
 [![Waveform of Für Elise; click to listen](gallery/beethoven-fur-elise.png)](gallery/beethoven-fur-elise.mp3)
 
 ▶ [beethoven-fur-elise.mp3](gallery/beethoven-fur-elise.mp3) (2:56), exported
 with `./project.sh simplified/beethoven-fur-elise mp3` and the FluidR3_GM
 soundfont.
+
+## Gallery
+
+Videos with a scrolling spectrogram above the waveform of each channel, made
+with `./project.sh <project> mp4` and the FluidR3_GM soundfont. Click a
+picture to watch.
+
+[![Für Elise; click to watch](gallery/beethoven-fur-elise.jpg)](gallery/beethoven-fur-elise.mp4)
+
+▶ [beethoven-fur-elise.mp4](gallery/beethoven-fur-elise.mp4) (2:56):
+`simplified/beethoven-fur-elise`
+
+The ten takes of `soundscapes/cyberpunk-neon`:
+
+| | |
+| --- | --- |
+| [![A neon sign buzzing in an alley](gallery/cyberpunk-neon00.jpg)](gallery/cyberpunk-neon00.mp4)<br>[`cyberpunk-neon00`](gallery/cyberpunk-neon00.mp4) (0:40): A neon sign buzzing in an alley | [![A flickering, failing sign](gallery/cyberpunk-neon01.jpg)](gallery/cyberpunk-neon01.mp4)<br>[`cyberpunk-neon01`](gallery/cyberpunk-neon01.mp4) (0:40): A flickering, failing sign |
+| [![A street of neon in the rain](gallery/cyberpunk-neon02.jpg)](gallery/cyberpunk-neon02.mp4)<br>[`cyberpunk-neon02`](gallery/cyberpunk-neon02.mp4) (0:45): A street of neon in the rain | [![Under a huge sign, the buzz all around](gallery/cyberpunk-neon03.jpg)](gallery/cyberpunk-neon03.mp4)<br>[`cyberpunk-neon03`](gallery/cyberpunk-neon03.mp4) (0:40): Under a huge sign, the buzz all around |
+| [![A shorting sign spitting sparks](gallery/cyberpunk-neon04.jpg)](gallery/cyberpunk-neon04.mp4)<br>[`cyberpunk-neon04`](gallery/cyberpunk-neon04.mp4) (0:40): A shorting sign spitting sparks | [![A quiet backstreet, one dim sign](gallery/cyberpunk-neon05.jpg)](gallery/cyberpunk-neon05.mp4)<br>[`cyberpunk-neon05`](gallery/cyberpunk-neon05.mp4) (0:45): A quiet backstreet, one dim sign |
+| [![A night market strip of signs](gallery/cyberpunk-neon06.jpg)](gallery/cyberpunk-neon06.mp4)<br>[`cyberpunk-neon06`](gallery/cyberpunk-neon06.mp4) (0:45): A night market strip of signs | [![A rooftop sign in the wind and rain](gallery/cyberpunk-neon07.jpg)](gallery/cyberpunk-neon07.mp4)<br>[`cyberpunk-neon07`](gallery/cyberpunk-neon07.mp4) (0:45): A rooftop sign in the wind and rain |
+| [![A motel sign, flicker and hum](gallery/cyberpunk-neon08.jpg)](gallery/cyberpunk-neon08.mp4)<br>[`cyberpunk-neon08`](gallery/cyberpunk-neon08.mp4) (0:40): A motel sign, flicker and hum | [![An arcade front, signs buzzing in a downpour](gallery/cyberpunk-neon09.jpg)](gallery/cyberpunk-neon09.mp4)<br>[`cyberpunk-neon09`](gallery/cyberpunk-neon09.mp4) (0:45): An arcade front, signs buzzing in a downpour |
 
 ## Features
 
@@ -32,8 +53,9 @@ soundfont.
   text and played through FluidSynth.
 - **Synthesis with NumPy.** Noise, filters, oscillators, panning and reverb,
   with every source placed by position, distance and timing.
-- **21 outputs.** PCM, lossless and lossy formats encoded by FFmpeg from 48
-  kHz stereo floats, and the raw NumPy array for further processing.
+- **22 outputs.** PCM, lossless and lossy formats encoded by FFmpeg from 48
+  kHz stereo floats, an MP4 video of the spectrogram and waveform, and the
+  raw NumPy array for further processing.
 - **Reproducible takes.** Each soundscape starts with its settings and a
   random seed; change the seed for another take of the same scene.
 
@@ -54,7 +76,7 @@ The audio is written to `build/beethoven-fur-elise.mp3`.
 | Python 3 | with [NumPy](https://numpy.org/) |
 | FluidSynth | `fluidsynth` on the `PATH` |
 | A General MIDI soundfont | by default `/usr/share/sounds/sf2/FluidR3_GM.sf2` (on Debian and Ubuntu, the `fluid-soundfont-gm` package); set `SOUNDFONT` to use another one |
-| FFmpeg | `ffmpeg` on the `PATH`, built with the encoders of the formats you want (`libmp3lame`, `libvorbis`, `libopus`, …) |
+| FFmpeg | `ffmpeg` on the `PATH`, built with the encoders of the formats you want (`libmp3lame`, `libvorbis`, `libopus`, `libx264`, …) |
 
 ## Usage
 
@@ -94,8 +116,12 @@ All audio is rendered as 48 kHz stereo floats and encoded by FFmpeg:
 | PCM | `wav` and `au` (16-bit), `aiff`, `caf` and `w64` (24-bit) |
 | Lossless compressed | `flac` (24-bit), `mka` (FLAC in Matroska), `alac`, `tta`, `wv` |
 | Lossy | `aac` and `m4a` (AAC), `ac3`, `dts`, `eac3`, `mp2`, `mp3`, `ogg` (Vorbis), `opus`, `wma` |
+| Video | `mp4` (H.264 spectrogram and waveform, AAC audio) |
 | Raw | `npy` |
 
+- `mp4` is a 640x360 video at 15 fps: a scrolling spectrogram above the
+  waveform of each channel, with the audio as 96 kbit/s AAC. The video
+  bitrate is capped by the length so a file stays under about 5 MB.
 - `alac` is written as `build/<name>-alac.m4a`, so it doesn't clash with
   `m4a`.
 - `npy` saves the raw float32 array of shape `(frames, 2)` to
