@@ -139,6 +139,7 @@ project.sh ──> python3 scripts/export<format>.py <project>
     scripts/<project>/<name>.py: <name>() -> float array (frames, 2)
        │ Score: MIDI events ──> fluidsynth -F raw ──> NumPy
        │ and/or NumPy synthesis, mixing, reverb
+                                    │ master(): -16 LUFS, -1 dBTP
                                     │ ffmpeg_export()
                                     ▼
                   ffmpeg -f f32le -i pipe:0 -c:a <codec> ...
@@ -147,7 +148,11 @@ project.sh ──> python3 scripts/export<format>.py <project>
 - `project.sh` checks the arguments and runs `scripts/export<format>.py` (or
   `scripts/savenpy.py`) with the project as its argument.
 - `scripts/common.py` imports the project, calls its function, checks the
-  shape of the audio and clips it to ±1. It also holds the shared tools:
+  shape of the audio and masters it with `master()`: it brings the audio to
+  an integrated loudness of -16 LUFS (ITU-R BS.1770, gated as in EBU R128)
+  and limits its true peak, 4 times oversampled, with a look-ahead limiter,
+  so every project plays at the same loudness and stays below -1 dBTP. It
+  also holds the shared tools:
   `Score`, which collects notes and controller changes in seconds, writes
   them as a MIDI file and renders it offline with FluidSynth through the
   soundfont, and `fit()` and `normalize()` for NumPy audio.
@@ -218,17 +223,38 @@ take of the same scene.
 ## Tests
 
 ```sh
-bash tests/test_project.sh             # project.sh
-python3 -m unittest discover tests     # the Python scripts
+bash tests/test_project.sh                          # project.sh
+python3 -m unittest discover tests                  # the Python scripts
+RENDER=all python3 -m unittest tests.test_audio     # render every project and check how it sounds
+RENDER='soundscapes/cyberpunk-*' python3 -m unittest tests.test_audio
 ```
 
-The tests need only bash and Python's standard library, and none of them
-runs the application or writes outputs.
+The tests need bash, Python and NumPy, and the loudness and frequency
+tests need FFmpeg too. None of them writes outputs.
 
 - `tests/test_project.sh` checks that `project.sh` rejects bad arguments
   with its usage and exit code 1.
 - `tests/test_common.py` checks `varlen()`, the MIDI variable-length
-  numbers, against the examples in the Standard MIDI File specification.
+  numbers, against the examples in the Standard MIDI File specification,
+  and the mastering: `loudness()` against the levels of test tones in
+  ITU-R BS.1770, and that `limit()` and `master()` keep the true peak below
+  the ceiling.
+- `tests/test_audio.py` checks that a project suits typical laptop
+  speakers. It measures it with FFmpeg's EBU R128 meter (ITU-R BS.1770),
+  first as it is and then through filters that drop what small drivers
+  can't play, below 150 Hz and above 16 kHz (24 dB per octave):
+
+  | Check | Limit |
+  | --- | --- |
+  | Integrated loudness | -20 to -12 LUFS |
+  | True peak | at most -1 dBTP |
+  | Loudness range | at most 15 LU |
+  | Loudness lost without the bass below 150 Hz | at most 6 LU |
+  | Loudness lost without what lies above 16 kHz | at most 0.5 LU |
+
+  The checks on the meter itself, with test tones, always run. The checks
+  on the projects render them, so they only run with `RENDER` set to `all`
+  or to a pattern of projects; `JOBS` sets how many render at once.
 
 Lint the code with [ShellCheck](https://www.shellcheck.net/) and
 [Ruff](https://docs.astral.sh/ruff/):
