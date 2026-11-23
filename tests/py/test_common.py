@@ -1,4 +1,4 @@
-"""Tests for scripts/common.py. Run: python3 -m unittest discover tests"""
+"""Tests for scripts/common.py. Run: python3 -m unittest discover tests/py"""
 import importlib
 import sys
 import unittest
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 common = importlib.import_module("common")
 
 

@@ -1,5 +1,5 @@
 """Loudness and frequency tests: every project should sound right on typical
-laptop speakers. Run: python3 -m unittest discover tests
+laptop speakers. Run: python3 -m unittest discover tests/py
 
 The checks on the projects render them, which takes a while, so they only run
 with RENDER set: RENDER=all for every project, or a pattern such as
@@ -20,7 +20,7 @@ import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS = ROOT / "scripts"
 RATE = 48000
 CHANNELS = 2

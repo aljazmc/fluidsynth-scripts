@@ -216,23 +216,54 @@ take of the same scene.
 ## Tests
 
 ```sh
-bash tests/test_project.sh                          # project.sh
-python3 -m unittest discover tests                  # the Python scripts
-RENDER=all python3 -m unittest tests.test_audio     # render every project and check how it sounds
-RENDER='soundscapes/cyberpunk-*' python3 -m unittest tests.test_audio
+for test in tests/sh/test_*.sh; do bash "$test"; done   # project.sh
+python3 -m unittest discover tests/py           # the Python scripts
+RENDER=all python3 tests/py/test_audio.py       # render every project and check how it sounds
+RENDER='soundscapes/cyberpunk-*' python3 tests/py/test_audio.py
 ```
 
 The tests need bash, Python and NumPy, and the loudness and frequency
-tests need FFmpeg too. None of them writes outputs.
+tests need FFmpeg too. None of them writes outputs, and only the loudness
+and frequency tests on the projects render anything.
 
-- `tests/test_project.sh` checks that `project.sh` rejects bad arguments
+The tests of `project.sh` run it in a temporary sandbox, with a few fake
+projects and stand-ins for `python3`, `fluidsynth` and `ffmpeg` (see
+`tests/sh/lib.sh`), so they never touch `build/` or `npy/`:
+
+- `tests/sh/test_project.sh` checks that `project.sh` rejects bad arguments
   with its usage and exit code 1.
-- `tests/test_common.py` checks `varlen()`, the MIDI variable-length
+- `tests/sh/test_formats.sh` checks that the formats of `project.sh`, the
+  exporters in `scripts/` and the Formats table of this README agree, and
+  that each exporter writes its own extension.
+- `tests/sh/test_outputs.sh` checks the names of the outputs, as described
+  under Usage, through the `clean` commands.
+- `tests/sh/test_run.sh` checks that `project.sh` runs the right exporter
+  for a project, a group and `all`, skips existing outputs, reports a
+  failed export with exit code 1 and stops when a program is missing.
+
+The Python tests:
+
+- `tests/py/test_projects.py` reads every project without running it: each
+  has its `<name>()` function, imports only the standard library, NumPy,
+  `common` and its own modules, and each soundscape takes its randomness
+  from one `default_rng(SEED)`, has sensible settings, and comes in ten
+  takes with seeds of their own. It also checks the counts of projects in
+  this README.
+- `tests/py/test_notation.py` checks the notation of `piano.py` (pitches,
+  chords, durations, ties, dynamics, meters, tempo), and plays every
+  arrangement with FluidSynth swapped for a recorder of the MIDI events:
+  every bar must fill its meter, and every event must be valid MIDI with
+  each note started and stopped. It needs neither FluidSynth nor a
+  soundfont.
+- `tests/py/test_midi.py` reads back the files `write_midi()` writes, with
+  a small parser of the Standard MIDI File format, and checks the events
+  of `Score`.
+- `tests/py/test_common.py` checks `varlen()`, the MIDI variable-length
   numbers, against the examples in the Standard MIDI File specification,
   and the mastering: `loudness()` against the levels of test tones in
   ITU-R BS.1770, and that `limit()` and `master()` keep the true peak below
   the ceiling.
-- `tests/test_audio.py` checks that a project suits typical laptop
+- `tests/py/test_audio.py` checks that a project suits typical laptop
   speakers. It measures it with FFmpeg's EBU R128 meter (ITU-R BS.1770),
   first as it is and then through filters that drop what small drivers
   can't play, below 150 Hz and above 16 kHz (24 dB per octave):
@@ -253,7 +284,7 @@ Lint the code with [ShellCheck](https://www.shellcheck.net/) and
 [Ruff](https://docs.astral.sh/ruff/):
 
 ```sh
-shellcheck project.sh tests/*.sh
+shellcheck project.sh tests/sh/*.sh
 ruff check .
 ```
 
