@@ -44,8 +44,7 @@ PIANOS = piano_modules()
 class NotationTest(unittest.TestCase):
 
     def each(self):
-        for project, piano in PIANOS:
-            yield project, piano
+        yield from PIANOS
 
     def test_pitch_names(self):
         for project, piano in self.each():
@@ -95,9 +94,8 @@ class NotationTest(unittest.TestCase):
 
     def test_bad_tokens_fail_with_the_bar(self):
         for project, piano in self.each():
-            with self.subTest(piano=project):
-                with self.assertRaisesRegex(ValueError, "bar 2"):
-                    piano.Voice("c4:1 | c4:1:2 |")
+            with self.subTest(piano=project), self.assertRaisesRegex(ValueError, "bar 2"):
+                piano.Voice("c4:1 | c4:1:2 |")
 
     def test_dynamics_and_hairpins(self):
         for project, piano in self.each():
@@ -149,7 +147,7 @@ class ArrangementTest(unittest.TestCase):
             with self.subTest(project=folder.name):
                 result = subprocess.run(
                     [sys.executable, "-c", RECORD, str(SCRIPTS), str(folder)],
-                    capture_output=True, text=True, cwd=ROOT
+                    capture_output=True, text=True, cwd=ROOT, check=False
                 )
                 # a bar that doesn't fill its meter fails here, with its number
                 self.assertEqual(result.returncode, 0, result.stderr[-2000:])

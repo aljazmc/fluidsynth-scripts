@@ -141,9 +141,10 @@ class SoundscapeTest(unittest.TestCase):
 
 class ReadmeTest(unittest.TestCase):
 
-    WORDS = ("zero one two three four five six seven eight nine ten eleven twelve "
-             "thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty "
-             "thirty forty fifty sixty seventy eighty ninety").split()
+    WORDS = ("zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+             "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+             "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty",
+             "forty", "fifty", "sixty", "seventy", "eighty", "ninety")
 
     def spell(self, count):
         if count < 20:
