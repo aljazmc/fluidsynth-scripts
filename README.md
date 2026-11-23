@@ -16,24 +16,17 @@ shell script encodes the result with FFmpeg into WAV, FLAC, MP3, Opus, MP4
 video and 17 other formats. 508 projects: eight arrangements of classical
 music and 500 ambient soundscapes.
 
-[![Waveform of Für Elise; click to listen](gallery/beethoven-fur-elise.png)](gallery/beethoven-fur-elise.mp3)
+[![Waveform of Für Elise; click to watch and listen](gallery/beethoven-fur-elise.png)](gallery/beethoven-fur-elise.mp4)
 
-▶ [beethoven-fur-elise.mp3](gallery/beethoven-fur-elise.mp3) (2:56), exported
-with `./project.sh simplified/beethoven-fur-elise mp3` and the FluidR3_GM
+▶ [beethoven-fur-elise.mp4](gallery/beethoven-fur-elise.mp4) (2:56), exported
+with `./project.sh simplified/beethoven-fur-elise mp4` and the FluidR3_GM
 soundfont.
 
 ## Gallery
 
-Videos with a scrolling spectrogram above the waveform of each channel, made
-with `./project.sh <project> mp4` and the FluidR3_GM soundfont. Click a
-picture to watch.
-
-[![Für Elise; click to watch](gallery/beethoven-fur-elise.jpg)](gallery/beethoven-fur-elise.mp4)
-
-▶ [beethoven-fur-elise.mp4](gallery/beethoven-fur-elise.mp4) (2:56):
-`simplified/beethoven-fur-elise`
-
-The ten takes of `soundscapes/cyberpunk-neon`:
+The ten takes of `soundscapes/cyberpunk-neon`, as videos with a scrolling
+spectrogram above the waveform of each channel, made with
+`./project.sh <project> mp4`. Click a picture to watch.
 
 | | |
 | --- | --- |
