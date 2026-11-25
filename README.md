@@ -1,6 +1,6 @@
 # fluidsynth-scripts
 
-[![lint](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/lint.yml/badge.svg)](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/lint.yml)
+[![CI](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/ci.yml/badge.svg)](https://github.com/aljazmc/fluidsynth-scripts/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![FluidSynth](https://img.shields.io/badge/FluidSynth-MIDI-2d6db5)](https://www.fluidsynth.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-synthesis-013243?logo=numpy&logoColor=white)](https://numpy.org/)
